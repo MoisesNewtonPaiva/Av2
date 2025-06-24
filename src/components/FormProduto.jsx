@@ -3,6 +3,7 @@ import { TextField, Button, Stack, CircularProgress } from "@mui/material";
 export default function FormProduto({
   produto,
   loading,
+  erros = {},
   onChange,
   onSubmit,
   onCancel,
@@ -19,6 +20,8 @@ export default function FormProduto({
           value={produto.nome}
           onChange={onChange}
           required
+          error={!!erros.nome}
+          helperText={erros.nome}
         />
         <TextField
           label="Preço"
@@ -28,6 +31,8 @@ export default function FormProduto({
           onChange={onChange}
           required
           inputProps={{ step: "0.01", min: "0" }}
+          error={!!erros.preco}
+          helperText={erros.preco}
         />
         <Button type="submit" variant="contained" color="primary">
           Salvar

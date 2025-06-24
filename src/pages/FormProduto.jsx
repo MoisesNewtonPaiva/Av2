@@ -8,6 +8,7 @@ export default function FormProdutoPage() {
   const { id } = useParams();
   const [produto, setProduto] = useState({ nome: "", preco: "" });
   const [loading, setLoading] = useState(false);
+  const [erros, setErros] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,8 +29,32 @@ export default function FormProdutoPage() {
     }));
   };
 
+  const validar = () => {
+    const novosErros = {};
+
+    if (!produto.nome || produto.nome.trim().length < 3) {
+      novosErros.nome = "O nome deve ter pelo menos 3 caracteres.";
+    }
+
+    const precoValido = parseFloat(produto.preco);
+    const regexPreco = /^\d+(\.\d{1,2})?$/;
+
+    if (!produto.preco) {
+      novosErros.preco = "O preço é obrigatório.";
+    } else if (isNaN(precoValido) || precoValido <= 0) {
+      novosErros.preco = "O preço deve ser um número positivo.";
+    } else if (!regexPreco.test(produto.preco)) {
+      novosErros.preco = "O preço deve ter no máximo duas casas decimais.";
+    }
+
+    setErros(novosErros);
+    return Object.keys(novosErros).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validar()) return;
+
     setLoading(true);
     if (id) {
       await produtoService.atualizar(id, {
@@ -68,32 +93,11 @@ export default function FormProdutoPage() {
       <FormProduto
         produto={produto}
         loading={loading}
+        erros={erros} 
         onChange={handleChange}
         onSubmit={handleSubmit}
         onCancel={() => navigate("/")}
       />
     </Paper>
   );
-}
-
-const validar = () => {
-  const novosErros = {};
-
-  if(!produto.nome || produto.nome.trim().length < 3) {
-    novosErros.nome = "O nome deve ter pelo menos 3 caracteres.";
-  }
-
-  const precoValido = parseFloat(produto.preco);
-  const regexPreco = /^\d+(\.\d{1,2})?$/;
-
-  if(!produto.preco) {
-    novosErros.preco = "O preço é obrigatório.";
-  } else if(isNaN(precoValido) || precoValido <= 0) {
-    novosErros.preco = "O preço deve ser um número positivo.";
-  }else if(!regexPreco.test(produto.preco)) {
-    novosErros.preco = "O preço deve ter no máximo duas casas decimais.";
-  }
-
-  setErros(novosErros);
-  return Object.keys(novosErros).length === 0;
 }
