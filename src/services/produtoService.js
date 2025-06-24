@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://leoproti.com.br:8004/produtos";
+const API_URL = "https://apipw.leoproti.com.br/produtos";
 
 const listar = async () => {
   const { data } = await axios.get(API_URL);
