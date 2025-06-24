@@ -5,17 +5,31 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 export default function NavBar() {
   const location = useLocation();
+
   return (
-    <AppBar position="static" sx={{ borderRadius: 0 }}>
-      <Toolbar>
-        <Stack direction="row" spacing={2}>
+    <AppBar
+      position="static"
+      sx={{
+        backgroundColor: "#2196f3", // Cor personalizada para o fundo
+        borderRadius: 0,
+        boxShadow: 2, // Adicionando sombra suave
+      }}
+    >
+      <Toolbar sx={{ justifyContent: "center" }}>
+        <Stack direction="row" spacing={4}>
           <Button
             color={location.pathname === "/" ? "secondary" : "inherit"}
             variant={location.pathname === "/" ? "contained" : "text"}
             component={RouterLink}
             to="/"
             startIcon={<ListAltIcon />}
-            sx={{ fontWeight: location.pathname === "/" ? "bold" : "normal" }}
+            sx={{
+              fontWeight: location.pathname === "/" ? "bold" : "normal",
+              textTransform: "none", // Remover capitalização do texto
+              "&:hover": {
+                backgroundColor: "#1976d2", // Cor no hover
+              },
+            }}
           >
             Produtos
           </Button>
@@ -27,6 +41,10 @@ export default function NavBar() {
             startIcon={<AddCircleOutlineIcon />}
             sx={{
               fontWeight: location.pathname === "/novo" ? "bold" : "normal",
+              textTransform: "none", // Remover capitalização do texto
+              "&:hover": {
+                backgroundColor: "#1976d2", // Cor no hover
+              },
             }}
           >
             Novo Produto
