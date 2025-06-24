@@ -75,3 +75,25 @@ export default function FormProdutoPage() {
     </Paper>
   );
 }
+
+const validar = () => {
+  const novosErros = {};
+
+  if(!produto.nome || produto.nome.trim().length < 3) {
+    novosErros.nome = "O nome deve ter pelo menos 3 caracteres.";
+  }
+
+  const precoValido = parseFloat(produto.preco);
+  const regexPreco = /^\d+(\.\d{1,2})?$/;
+
+  if(!produto.preco) {
+    novosErros.preco = "O preço é obrigatório.";
+  } else if(isNaN(precoValido) || precoValido <= 0) {
+    novosErros.preco = "O preço deve ser um número positivo.";
+  }else if(!regexPreco.test(produto.preco)) {
+    novosErros.preco = "O preço deve ter no máximo duas casas decimais.";
+  }
+
+  setErros(novosErros);
+  return Object.keys(novosErros).length === 0;
+}
