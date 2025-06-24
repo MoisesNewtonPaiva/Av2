@@ -1,13 +1,17 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter } from "react-router-dom";
+import NavBar from "./components/NavBar";
+import AppRoutes from "./routes/AppRoutes";
+import "./App.css";
 
-export default function App() {
+function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/formulario" element={<Formulario />} />
-    </Routes>
+    <BrowserRouter>
+      <NavBar />
+      <div style={{ marginTop: 32 }}>
+        <AppRoutes />
+      </div>
+    </BrowserRouter>
   );
 }
+
+export default App;
