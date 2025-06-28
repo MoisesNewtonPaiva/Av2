@@ -23,6 +23,7 @@ export default function NovoProduto() {
 
     if (!produto.nome || produto.nome.trim().length < 3) {
       novosErros.nome = "O nome deve ter pelo menos 3 letras.";
+      alert(novosErros.nome);
     }
 
     const preco = parseFloat(produto.preco.toString());
@@ -30,6 +31,7 @@ export default function NovoProduto() {
       novosErros.preco = "O preço é obrigatório.";
     } else if (isNaN(preco) || preco <= 0) {
       novosErros.preco = "Preço inválido.";
+      alert(novosErros.preco);
     }
 
     setErros(novosErros);
@@ -119,7 +121,7 @@ const estilo = {
   backgroundColor: '#fff',
   shadowColor: '#000',
   shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.25, // Aqui é válido
+  shadowOpacity: 0.25, 
   shadowRadius: 3.84,
   elevation: 5,
 };
