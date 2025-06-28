@@ -50,7 +50,7 @@ export default function RootLayout() {
         />
         <Stack.Screen
           name="produtos/novo"
-          options={{ title: "Novo Produto" }}
+          options={{ title: "Adicione um produto" }}
         />
         <Stack.Screen
           name="produtos/[id]"

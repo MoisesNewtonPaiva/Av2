@@ -1,7 +1,7 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { View, ActivityIndicator } from "react-native";
-import { Text } from "react-native-paper";
+import { View, ActivityIndicator, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
+import { Text, Card } from "react-native-paper";
 import produtoService, { Produto } from "../../script/produtoService";
 import FormProduto from "../../components/FormProduto";
 
@@ -51,26 +51,65 @@ export default function EditarProduto() {
     return <ActivityIndicator size="large" style={{ marginTop: 40 }} />;
 
   return (
-    <View style={{ flex: 1, padding: 16 }}>
-      <Text
-        variant="titleLarge"
-        style={{ textAlign: "center", marginBottom: 20 }}
-      >
-        Editar Produto
-      </Text>
-      <FormProduto
-        produto={produto}
-        loading={loading}
-        onChange={handleChange}
-        onSubmit={handleSubmit}
-        onCancel={() => {
-          if (router.canGoBack?.()) {
-            router.back();
-          } else {
-            router.replace("/produtos");
-          }
-        }}
-      />
-    </View>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
+      <View style={styles.outerCard}>
+        <Text style={styles.pageTitle}>Editar Produto</Text>
+        <Card style={styles.card} mode="elevated">
+          <Text style={styles.title}>Editar Produto</Text>
+          <FormProduto
+            produto={produto}
+            loading={loading}
+            onChange={handleChange}
+            onSubmit={handleSubmit}
+            onCancel={() => {
+              if (router.canGoBack?.()) {
+                router.back();
+              } else {
+                router.replace("/produtos");
+              }
+            }}
+          />
+        </Card>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#f5f6fa",
+    padding: 16,
+    justifyContent: "center",
+  },
+  outerCard: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 16,
+    elevation: 4,
+    shadowColor: "#000",
+  },
+  pageTitle: {
+    textAlign: "center",
+    fontSize: 18,
+    color: "#1976d2",
+    fontWeight: "bold",
+    marginBottom: 12,
+  },
+  card: {
+    backgroundColor: "#f7f7f7",
+    borderRadius: 12,
+    padding: 20,
+    elevation: 4,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#1976d2",
+    textAlign: "center",
+    marginBottom: 16,
+  },
+});

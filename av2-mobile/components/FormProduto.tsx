@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View } from "react-native";
+import { View, Text, Alert } from "react-native";
 import { Controller, useForm } from "react-hook-form";
 import { TextInput, Button } from "react-native-paper";
 import { Produto } from "../script/produtoService";
@@ -8,7 +8,7 @@ interface Props {
   produto: Produto;
   loading: boolean;
   onChange: (name: keyof Produto, value: string) => void;
-  onSubmit: () => void;
+  onSubmit: (data: Produto) => void;
   onCancel: () => void;
 }
 
@@ -19,7 +19,10 @@ export default function FormProduto({
   onSubmit,
   onCancel,
 }: Props) {
-  const { control, handleSubmit, setValue } = useForm({
+  const { control, handleSubmit, setValue } = useForm<{
+    nome: string;
+    preco: string;
+  }>({
     defaultValues: {
       nome: produto.nome,
       preco: produto.preco ? String(produto.preco) : "",
@@ -33,67 +36,94 @@ export default function FormProduto({
 
   return (
     <View style={{ width: "100%" }}>
+
       <Controller
         control={control}
         name="nome"
-        rules={{ required: "Nome obrigatório" }}
+        rules={{ required: "O nome é obrigatório." }}
         render={({ field: { onChange: onChangeField, value }, fieldState }) => (
-          <TextInput
-            label="Nome"
-            value={value}
-            onChangeText={(text) => {
-              onChangeField(text);
-              onChange("nome", text);
-            }}
-            mode="outlined"
-            style={{ marginBottom: 16, backgroundColor: "#fff" }}
-            autoFocus
-            textColor="#222"
-            underlineColor="#1976d2"
-            selectionColor="#1976d2"
-            error={!!fieldState.error}
-          />
+          <>
+            <TextInput
+              label="Nome"
+              value={value}
+              onChangeText={(text) => {
+                onChangeField(text);
+                onChange("nome", text);
+              }}
+              mode="outlined"
+              style={{ marginBottom: 4, backgroundColor: "#fff" }}
+              error={!!fieldState.error}
+            />
+            {fieldState.error?.message && (
+              <Text style={{ color: "#d32f2f", marginBottom: 12 }}>
+                {fieldState.error.message}
+              </Text>
+            )}
+          </>
         )}
       />
+
+
       <Controller
         control={control}
         name="preco"
         rules={{
-          required: "Preço obrigatório",
+          required: "O preço é obrigatório.",
           pattern: {
             value: /^\d+(\.\d{1,2})?$/,
-            message: "Digite um valor válido",
+            message: "Digite um valor válido com até 2 casas decimais.",
           },
         }}
         render={({ field: { onChange: onChangeField, value }, fieldState }) => (
-          <TextInput
-            label="Preço"
-            value={value}
-            onChangeText={(text) => {
-              let sanitized = text.replace(",", ".").replace(/[^0-9.]/g, "");
-              onChangeField(sanitized);
-              onChange("preco", sanitized);
-            }}
-            mode="outlined"
-            keyboardType="decimal-pad"
-            style={{ marginBottom: 16, backgroundColor: "#fff" }}
-            inputMode="decimal"
-            underlineColor="#1976d2"
-            selectionColor="#1976d2"
-            textColor="#222"
-            error={!!fieldState.error}
-          />
+          <>
+            <TextInput
+              label="Preço"
+              value={value}
+              onChangeText={(text) => {
+                const sanitized = text.replace(",", ".").replace(/[^0-9.]/g, "");
+                onChangeField(sanitized);
+                onChange("preco", sanitized);
+              }}
+              mode="outlined"
+              keyboardType="decimal-pad"
+              style={{ marginBottom: 4, backgroundColor: "#fff" }}
+              error={!!fieldState.error}
+            />
+            {fieldState.error?.message && (
+              <Text style={{ color: "#d32f2f", marginBottom: 12 }}>
+                {fieldState.error.message}
+              </Text>
+            )}
+          </>
         )}
       />
+
+
       <Button
-        mode="contained"
-        onPress={handleSubmit(onSubmit)}
-        loading={loading}
-        style={{ marginBottom: 10, backgroundColor: "#1976d2" }}
-        labelStyle={{ color: "#fff" }}
-      >
-        Salvar
-      </Button>
+  mode="contained"
+  onPress={handleSubmit(
+    (data) => {
+      const preco = parseFloat(data.preco);
+      if (isNaN(preco) || preco <= 0) {
+        alert("Preço inválido.");
+        return;
+      }
+      onSubmit({ nome: data.nome, preco });
+    },
+    (errors) => {
+
+      const mensagens = Object.values(errors).map((e) => e.message).filter(Boolean);
+      if (mensagens.length > 0) {
+        alert(mensagens[0]);
+      }
+    }
+  )}
+  loading={loading}
+  style={{ marginBottom: 10, backgroundColor: "#1976d2" }}
+  labelStyle={{ color: "#fff" }}
+>
+  Salvar
+</Button>
       <Button
         mode="outlined"
         onPress={onCancel}
@@ -104,3 +134,4 @@ export default function FormProduto({
     </View>
   );
 }
+
